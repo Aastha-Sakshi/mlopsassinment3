@@ -35,6 +35,7 @@ FILES = (
     "pytest.ini",
     "requirements-api.txt",
     "requirements.txt",
+    "requirements-video.txt",
     "data/downloads/PetImages.dvc",
     "data/processed/PetImages224.dvc",
 )

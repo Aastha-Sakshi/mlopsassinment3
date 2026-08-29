@@ -1,3 +1,5 @@
+name: mlops_binary_class
+
 services:
   api:
     image: "${IMAGE_REPOSITORY:-cats-dogs-api}:${IMAGE_TAG:-local}"

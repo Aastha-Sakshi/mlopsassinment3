@@ -1,110 +1,140 @@
 # Cats vs Dogs MLOps Assignment
 
-This repository implements the Assignment 2 MLOps lifecycle for binary Cats vs
-Dogs image classification in a pet-adoption context.
+## Project
 
-## Current status
+This project classifies an uploaded image as a cat or a dog. It also shows how
+an ML model can be prepared, tested, packaged, deployed, and monitored as one
+small working system.
 
-The required local M1-M5 path now includes:
+## Goal
 
-- the configuration, preprocessing, dataset, and artifact contracts,
-- dataset validation and deterministic split-manifest tooling,
-- a Kaggle-trained repository-native SimpleCNN baseline and production bundle,
-- persistent MLflow tracking with browser UI, metrics, loss/confusion plots,
-- FastAPI health, prediction, request metrics, and post-deployment evaluation,
-- a tested Docker image, Compose deployment, and GitHub CI/CD workflows.
+Train a simple cats-vs-dogs image classifier and make it available through a
+FastAPI service running in Docker.
 
-Phase 2C is complete. The full processed dataset contains 24,966 validated
-224 x 224 RGB images and is tracked by DVC. Baseline training uses a
-deterministic, balanced manifest-only subset of 12,480 images.
-
-The friend-provided prototype is preserved unchanged in
-`prototype_original/mlops-cats-dogs-assignment2.zip`. It is a reference, not
-the active implementation.
-
-## Local toolchain status
-
-A project-local Python 3.11 environment now exists in `.venv`, and
-`requirements.txt` captures the intended local dependency contract. Kaggle or
-Colab notebooks remain optional execution environments, but the repository is
-the source of truth for local development, testing, MLflow tooling, Docker,
-and the inference service.
-
-## Architecture direction
+## How it works
 
 ```text
-Kaggle dataset
-  -> DVC-tracked raw data
-  -> deterministic split manifests and processed 224 x 224 RGB data
-  -> baseline SimpleCNN training and MLflow tracking
-  -> versioned model bundle
-  -> FastAPI inference service
-  -> Docker Compose deployment
+Kaggle Dataset
+      ↓
+Data preparation
+      ↓
+CNN training
+      ↓
+MLflow experiment tracking
+      ↓
+Saved model
+      ↓
+FastAPI
+      ↓
+Docker
+      ↓
+Deployment
+      ↓
+Monitoring and evaluation
 ```
 
-Kaggle Compute is the preferred optional remote environment for the baseline
-because the selected dataset is already hosted there. Google Colab remains an
-optional alternative, and the same repository modules must also run locally as
-a slower fallback. No remote environment is an inference dependency: the
-deployed FastAPI service loads a finished model bundle from its own filesystem.
+## Dataset
 
-## Foundation contracts
+The source is the Kaggle dataset
+[`bhavikjikadara/dog-and-cat-classification-dataset`](https://www.kaggle.com/datasets/bhavikjikadara/dog-and-cat-classification-dataset).
+The complete downloaded and processed datasets are versioned with DVC. After
+validation, the processed dataset contains 24,966 valid 224 × 224 RGB images.
 
-- `configs/base.yaml` is the readable central configuration file.
-- `src/preprocessing/image_contract.py` defines deterministic 224 x 224 RGB
-  image preparation shared by later training, evaluation, and inference code.
-- `src/data/contracts.py` defines the small records used for dataset identity,
-  samples, and split manifests.
-- `src/models/artifact.py` defines metadata required to safely identify a
-  production model bundle.
+The baseline experiment uses a deterministic balanced subset of 12,480 images:
 
-## Data and model policy
+- 6,240 cats and 6,240 dogs
+- 9,984 training images
+- 1,248 validation images
+- 1,248 test images
 
-The selected source is Kaggle dataset
-`bhavikjikadara/dog-and-cat-classification-dataset`. Raw and processed images
-remain out of Git and are versioned through DVC. Small deterministic manifests,
-configuration, and validation metadata remain in Git.
+The 12,480-image subset is the baseline training population, not the size of
+the original dataset. It reduces training and iteration time while keeping the
+experiment balanced and reproducible. Exact image membership, seeds, and
+hashes are stored in `data/manifests/baseline_50/`. No extra copy of the images
+is created for the subset.
 
-The full Kaggle dataset is the authoritative DVC-versioned dataset, while a
-deterministic balanced 50% subset is used for the assignment's baseline
-training experiment to reduce iteration time. The subset contains 6,240 cats
-and 6,240 dogs: 9,984 training, 1,248 validation, and 1,248 test images. Exact
-membership and hashes are recorded under `data/manifests/baseline_50/`; no
-second physical image copy is created locally.
+## Model
 
-The selected, small production model bundle may be committed to Git so a Docker
-image can contain a known valid artifact. Training checkpoints and experiment
-output will not be committed.
+The baseline is a small convolutional neural network (`SimpleCNN`) trained for
+five epochs. It achieved:
 
-## Development philosophy
+- test accuracy: **80.05%**
+- macro F1 score: **79.99%**
 
-Clarity over cleverness is a standing project requirement. Code should be easy
-to read, explicit about assumptions, and simple enough to explain in a review.
-Complexity is added only when it protects correctness, reproducibility, or a
-real assignment requirement.
+These are the measured held-out test results; they are not presented as a
+state-of-the-art accuracy claim. The saved model and its metadata are in
+`models/production/`.
 
-## Core commands
+## API
+
+The FastAPI service provides:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /health` | Confirms that the service is running and the model is loaded |
+| `POST /predict` | Accepts an image and returns cat/dog probabilities |
+| `GET /metrics` | Returns request count, error count, and average prediction latency |
+
+Interactive API documentation is available at `http://127.0.0.1:8000/docs`
+while the service is running.
+
+## MLOps workflow
+
+- **Git** versions source code, configuration, manifests, and documentation.
+- **DVC** versions the full raw and processed image datasets without placing
+  the images in Git.
+- **MLflow** records training parameters, metrics, the loss curve, confusion
+  matrix, and model information.
+- **pytest** checks preprocessing, data splits, subset reproducibility, model
+  utilities, the API, and the saved model bundle.
+- **Docker** packages the FastAPI service and trained model.
+- **GitHub Actions** runs tests, builds the image, and publishes it to GHCR.
+- **Docker Compose** deploys the published image on the Windows self-hosted
+  runner and the CD workflow performs health and prediction smoke tests.
+- **Monitoring** records incoming requests and exposes request/error counts and
+  average latency. A labelled post-deployment batch is evaluated separately.
+
+## Running locally
+
+Python 3.11 is the project target.
 
 ```powershell
-python -m scripts.validate_baseline_subset --manifests-dir data/manifests/baseline_50
-python -m src.training.train --config configs/base.yaml --promote-to-production
-mlflow server --backend-store-uri sqlite:///mlruns/mlflow.db --default-artifact-root mlartifacts --host 127.0.0.1 --port 5000 --workers 1
-uvicorn src.api.main:app --host 0.0.0.0 --port 8000
-docker compose up --build -d
-python -m scripts.smoke_test
-python -m scripts.post_deployment_evaluate
-python -m scripts.package_submission
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m pytest -q
 ```
 
-The Kaggle notebook at `kaggle/kernel/training_kaggle.ipynb` calls these same
-repository modules. It contains no second preprocessing, model, or training
-implementation.
+Start the tested Docker service and make a health/prediction request:
 
-## Verified baseline
+```powershell
+docker compose up -d --build
+python -m scripts.smoke_test --base-url http://127.0.0.1:8000
+```
 
-The production SimpleCNN bundle is traceable to MLflow run
-`462a190825b548c7b6d5600724b42cca`. Its held-out test accuracy is 0.80048 and
-macro F1 is 0.79990. The local Docker Compose service has passed both `/health`
-and real-image `/predict` smoke checks. See `docs/submission-guide.md` for the
-evidence map, reproduction commands, deployment flow, and remaining external
-GitHub setup.
+Start the local MLflow browser UI:
+
+```powershell
+mlflow server --backend-store-uri sqlite:///mlruns/mlflow.db --default-artifact-root mlartifacts --host 127.0.0.1 --port 5000 --workers 1
+```
+
+Then open `http://127.0.0.1:5000`.
+
+## Assignment coverage
+
+| Requirement | Implementation |
+| --- | --- |
+| M1 — Data + model | DVC, deterministic preprocessing/splits, SimpleCNN, MLflow |
+| M2 — API + Docker | FastAPI, saved model, pinned dependencies, Docker |
+| M3 — Testing + CI | pytest, GitHub Actions, GHCR image publication |
+| M4 — Deployment | GitHub Actions CD, self-hosted runner, Docker Compose, smoke test |
+| M5 — Monitoring + evaluation | Request logs, metrics endpoint, labelled post-deployment evaluation, submission package and demo |
+
+## Demonstration
+
+The final demonstration video is generated by `scripts/record_demo.py` and is
+written to `docs/demo.mp4`. It shows evidence for M1–M5 in less than five
+minutes.
+
+More detailed evidence and reproduction notes are in
+[`docs/submission-guide.md`](docs/submission-guide.md).
