@@ -35,7 +35,6 @@ FILES = (
     "pytest.ini",
     "requirements-api.txt",
     "requirements.txt",
-    "requirements-video.txt",
     "data/downloads/PetImages.dvc",
     "data/processed/PetImages224.dvc",
 )
@@ -64,7 +63,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("dist/mlops-cats-dogs-submission-final.zip"),
+        default=Path("dist/mlops-cats-dogs-assignment2.zip"),
     )
     parser.add_argument("--inspect-only", action="store_true")
     args = parser.parse_args()

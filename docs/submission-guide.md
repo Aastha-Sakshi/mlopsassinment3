@@ -63,13 +63,6 @@ Final verified automation evidence:
 
 ## Demonstration video
 
-The deterministic browser demonstration is generated with:
-
-```powershell
-scripts\run_demo.cmd
-python -m scripts.validate_video docs/demo.mp4
-```
-
 The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 264.80
 seconds (4:24.80), with no black section lasting two seconds or longer. It is
 a silent browser recording with burned-in, human-written subtitles and subtle
@@ -82,7 +75,7 @@ desktop notifications.
 python -m scripts.package_submission
 ```
 
-This creates `dist/mlops-cats-dogs-submission-final.zip` from an explicit allowlist.
+This creates `dist/mlops-cats-dogs-assignment2.zip` from an explicit allowlist.
 It includes source, configurations, DVC pointers/manifests, tests, workflows,
 the production bundle, and compact experiment evidence. Raw/processed images,
 the DVC cache, virtual environment, credentials, and transient Kaggle downloads
