@@ -55,6 +55,26 @@ The runner label must be `mlops-deploy`. Register the runner only on a trusted,
 persistent host; repository collaborators can modify workflows that execute on
 it. Do not place GitHub, Kaggle, or MLflow credentials in the repository.
 
+Final verified automation evidence:
+
+- CI run: `33260462683` — tests, model validation, image build, and GHCR publish passed
+- CD run: `33260564239` — immutable image pull, Compose deployment, and smoke test passed
+- deployed image: `ghcr.io/aastha-sakshi/cats-dogs-api:87ada8b46344e7370c8b36b52fefe02b5c44bd84`
+
+## Demonstration video
+
+The deterministic browser demonstration is generated with:
+
+```powershell
+scripts\run_demo.cmd
+python -m scripts.validate_video docs/demo.mp4
+```
+
+The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 275.16
+seconds (4:35.16), with no black section lasting two seconds or longer. It is
+a silent, captioned browser recording and contains no credentials or desktop
+notifications.
+
 ## Packaging
 
 ```powershell

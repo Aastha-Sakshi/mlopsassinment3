@@ -112,7 +112,7 @@
   "sample_count": 20,
   "samples_per_class": 10,
   "service_metrics": {
-    "average_prediction_latency_ms": 121.35098452424808,
+    "average_prediction_latency_ms": 31.772863476175775,
     "prediction_error_count": 0,
     "prediction_request_count": 21
   }
