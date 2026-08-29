@@ -32,7 +32,12 @@ THEME = """
 <style>
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
-body { background: #0d1321; color: #e7edf8; font-family: 'Segoe UI', Arial, sans-serif; }
+body { background: #0d1321; color: #e7edf8; font-family: 'Segoe UI', Arial, sans-serif;
+       background-image: radial-gradient(circle at 78% 18%, #17335a66 0, transparent 34%),
+                         linear-gradient(135deg, #0b1120 0%, #101a2c 100%); }
+body::before { content:''; position:fixed; inset:0; pointer-events:none; opacity:.22;
+  background-image:linear-gradient(#6682a918 1px,transparent 1px),linear-gradient(90deg,#6682a918 1px,transparent 1px);
+  background-size:54px 54px; }
 .wrap { width: 100%; height: 100%; padding: 70px 92px; }
 .eyebrow { color: #6ea8fe; font-size: 24px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; }
 h1 { margin: 22px 0 18px; font-size: 70px; line-height: 1.08; letter-spacing: -.02em; }
@@ -56,6 +61,25 @@ pre { background: #111a2b; border: 1px solid #2c3c59; border-radius: 14px; color
 .prediction { display:grid; grid-template-columns:360px 1fr; gap:30px; align-items:center; }
 .prediction img { width:360px; height:300px; object-fit:cover; border-radius:16px; }
 .ok { color:#7ee2a8; } .warn { color:#ffd166; }
+.title-card { position:relative; display:flex; flex-direction:column; justify-content:center; }
+.title-card h1 { max-width:1420px; font-size:82px; margin:24px 0 18px; }
+.title-card .lead { color:#b8c8de; font-size:33px; max-width:1280px; line-height:1.45; }
+.title-rule { width:112px; height:4px; border-radius:4px; background:linear-gradient(90deg,#6ea8fe,#7ee2d6); }
+.tech-row { display:flex; gap:13px; margin:32px 0 38px; }
+.tech { padding:10px 17px; border:1px solid #36547c; border-radius:999px; color:#cfe0f8;
+        background:#14223aaa; font-size:19px; }
+.meta-row { display:grid; grid-template-columns:1.1fr .85fr 1.3fr 1.5fr; gap:24px; max-width:1510px; }
+.meta-item { border-top:1px solid #334865; padding-top:15px; }
+.meta-value { color:#f3f7fd; font-size:24px; margin-top:7px; }
+.orb { position:absolute; right:125px; top:135px; width:255px; height:255px; border-radius:50%;
+       border:1px solid #6ea8fe55; box-shadow:0 0 90px #397bd844 inset,0 0 100px #397bd822; }
+.orb::before,.orb::after { content:''; position:absolute; border-radius:50%; border:1px solid #7ee2d655; }
+.orb::before { inset:37px; } .orb::after { inset:82px; background:#6ea8fe22; }
+.reveal { animation:rise .75s cubic-bezier(.2,.8,.2,1) both; }
+.delay-1 { animation-delay:.15s; } .delay-2 { animation-delay:.3s; } .delay-3 { animation-delay:.45s; }
+.orb { animation:breathe 5s ease-in-out infinite; }
+@keyframes rise { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+@keyframes breathe { 0%,100% { transform:scale(1); opacity:.8; } 50% { transform:scale(1.035); opacity:1; } }
 </style>
 """
 
@@ -69,6 +93,60 @@ def set_html(page: Page, body: str) -> None:
     page.set_content(f"<!doctype html><html><head>{THEME}</head><body>{body}</body></html>")
 
 
+def hold(page: Page, seconds: float, scroll: int = 0) -> None:
+    """Keep a scene alive with deterministic, understated motion."""
+    points = ((1510, 180), (1640, 310), (1420, 420), (1580, 520), (1470, 610))
+    steps = max(1, min(len(points), int(seconds // 2.2)))
+    scroll_step = int(scroll / steps) if scroll else 0
+    pause_ms = max(450, int(seconds * 1000 / steps))
+    for index in range(steps):
+        x, y = points[index]
+        page.evaluate(
+            """([x, y, duration]) => {
+              let cursor = document.getElementById('__demo_cursor__');
+              if (!cursor) {
+                cursor = document.createElement('div'); cursor.id='__demo_cursor__';
+                cursor.style.cssText='position:fixed;left:0;top:0;width:14px;height:14px;border-radius:50%;'
+                  +'border:2px solid rgba(255,255,255,.9);background:rgba(110,168,254,.65);'
+                  +'box-shadow:0 2px 10px rgba(0,0,0,.45);z-index:2147483647;pointer-events:none;'
+                  +'transform:translate(1500px,180px);'; document.body.appendChild(cursor);
+              }
+              cursor.animate(
+                [{transform:cursor.style.transform},{transform:`translate(${x}px,${y}px)`}],
+                {duration,fill:'forwards',easing:'cubic-bezier(.22,.75,.28,1)'}
+              );
+              cursor.style.transform=`translate(${x}px,${y}px)`;
+            }""",
+            [x, y, min(1800, pause_ms - 120)],
+        )
+        if scroll_step:
+            page.mouse.wheel(0, scroll_step)
+        page.wait_for_timeout(pause_ms)
+
+
+def title_card(page: Page, seconds: float) -> None:
+    mark("MLOps Assignment 2 - Cats vs Dogs")
+    set_html(
+        page,
+        "<div class='wrap title-card'><div class='orb'></div>"
+        "<div class='eyebrow reveal'>AIMLCZG523 · MLOps · Assignment 2</div>"
+        "<div class='title-rule reveal delay-1'></div>"
+        "<h1 class='reveal delay-1'>Cats vs Dogs<br>MLOps Pipeline</h1>"
+        "<div class='lead reveal delay-2'>From versioned image data and experiment tracking to a tested, "
+        "containerized and monitored prediction service.</div>"
+        "<div class='tech-row reveal delay-2'><span class='tech'>DVC</span><span class='tech'>SimpleCNN</span>"
+        "<span class='tech'>MLflow</span><span class='tech'>FastAPI</span><span class='tech'>Docker</span>"
+        "<span class='tech'>GitHub Actions</span></div>"
+        "<div class='meta-row reveal delay-3'>"
+        "<div class='meta-item'><div class='label'>Submitted by</div><div class='meta-value'>Aastha Sakshi</div></div>"
+        "<div class='meta-item'><div class='label'>BITS ID</div><div class='meta-value'>2024AC05266</div></div>"
+        "<div class='meta-item'><div class='label'>Use case</div><div class='meta-value'>Pet adoption · Binary vision</div></div>"
+        "<div class='meta-item'><div class='label'>Coverage</div><div class='meta-value'>M1–M5 · End-to-end workflow</div></div>"
+        "</div></div>",
+    )
+    hold(page, seconds)
+
+
 def card(page: Page, number: str, title: str, subtitle: str, seconds: float) -> None:
     mark(f"{number} - {title}")
     set_html(
@@ -78,7 +156,7 @@ def card(page: Page, number: str, title: str, subtitle: str, seconds: float) -> 
         f"<h1>{html.escape(title)}</h1><div class='sub'>{html.escape(subtitle)}</div>"
         "</div></div>",
     )
-    page.wait_for_timeout(int(seconds * 1000))
+    hold(page, seconds)
 
 
 def caption(page: Page, title: str, subtitle: str = "") -> None:
@@ -86,11 +164,11 @@ def caption(page: Page, title: str, subtitle: str = "") -> None:
         """([title, subtitle]) => {
           document.getElementById('__demo_caption__')?.remove();
           const el = document.createElement('div'); el.id='__demo_caption__';
-          el.style.cssText='position:fixed;left:28px;right:28px;bottom:24px;z-index:2147483647;'
+          el.style.cssText='position:fixed;right:28px;top:24px;width:620px;z-index:2147483646;'
             +'background:rgba(13,19,33,.94);border:1px solid #3b5378;border-radius:12px;'
-            +'padding:17px 24px;color:white;font-family:Segoe UI,Arial;box-shadow:0 8px 30px #0008';
-          el.innerHTML='<div style="font-size:26px;font-weight:700">'+title+'</div>'+
-            '<div style="font-size:20px;color:#b9c7dc;margin-top:4px">'+subtitle+'</div>';
+            +'padding:13px 18px;color:white;font-family:Segoe UI,Arial;box-shadow:0 8px 30px #0006';
+          el.innerHTML='<div style="font-size:21px;font-weight:700">'+title+'</div>'+
+            '<div style="font-size:16px;color:#b9c7dc;margin-top:3px">'+subtitle+'</div>';
           document.body.appendChild(el);
         }""",
         [title, subtitle],
@@ -100,12 +178,12 @@ def caption(page: Page, title: str, subtitle: str = "") -> None:
 def visit(page: Page, url: str, title: str, subtitle: str, seconds: float, scroll: int = 0) -> None:
     mark(title)
     page.goto(url, wait_until="domcontentloaded", timeout=45_000)
-    page.wait_for_timeout(1600)
-    if scroll:
-        page.mouse.wheel(0, scroll)
-        page.wait_for_timeout(900)
+    if url.startswith(REPOSITORY) and "#readme" in url:
+        page.evaluate("window.scrollTo(0, 850)")
+        scroll = max(0, scroll - 850)
+    page.wait_for_timeout(1800)
     caption(page, title, subtitle)
-    page.wait_for_timeout(int(seconds * 1000))
+    hold(page, seconds, scroll=scroll)
 
 
 def image_uri(path: Path) -> str:
@@ -170,8 +248,7 @@ def live_evidence() -> dict[str, object]:
 
 
 def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[str, object]) -> None:
-    card(page, "CATS VS DOGS", "From images to a deployed service",
-         "MLOps Assignment 2 · reproducible data, tracked experiments, API, CI/CD and monitoring", 8)
+    title_card(page, 10)
 
     mark("01 - End-to-end workflow")
     set_html(page, "<div class='wrap'><div class='eyebrow'>01 · Project</div><h1>One model, complete workflow</h1>"
@@ -181,7 +258,7 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
              "<div class='node'>FastAPI</div><div class='arrow'>→</div><div class='node'>Docker</div>"
              "<div class='arrow'>→</div><div class='node'>GitHub Actions</div></div>"
              "<p style='margin-top:70px'>The repository holds the code and configuration. Kaggle supplied compute; the deployed service uses only the finished model.</p></div>")
-    page.wait_for_timeout(14_000)
+    hold(page, 14)
 
     metadata = json.loads((ROOT / "data/manifests/baseline_50/subset_metadata.json").read_text())
     mark("02 - Dataset and DVC")
@@ -194,7 +271,7 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
              f"Selection seed: {metadata['selection_seed']}\nSubset hash: {metadata['subset_manifest_combined_sha256'][:24]}…\n"
              f"Processed DVC: {metadata['source_processed_dvc']['hash']}</pre></div></div>"
              "<p>The full Kaggle dataset remains the authoritative DVC-versioned source. The subset is represented only by Git-tracked manifests.</p></div>")
-    page.wait_for_timeout(22_000)
+    hold(page, 22)
 
     visit(page, f"{MLFLOW}/#/experiments/1/runs/{BASELINE_RUN_ID}",
           "03 - MLflow experiment", "Parameters, metrics and saved artifacts from the Kaggle T4 baseline run", 21)
@@ -203,9 +280,9 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
     loss = image_uri(ROOT / "artifacts/training/simple-cnn-baseline-50pct/loss_curve.png")
     set_html(page, f"<div class='wrap'><div class='eyebrow'>03 · M1</div><h2>Measured baseline results · 80.05% accuracy · 79.99% macro F1</h2>"
              f"<div class='plots'><img src='{confusion}' alt='Confusion matrix'><img src='{loss}' alt='Loss curve'></div></div>")
-    page.wait_for_timeout(14_000)
+    hold(page, 14)
 
-    visit(page, REPOSITORY, "04 - GitHub repository", "Readable project overview, source, manifests, tests and deployment files", 17, 380)
+    visit(page, f"{REPOSITORY}#readme", "04 - GitHub repository", "Readable project overview, source, manifests, tests and deployment files", 17, 1050)
     visit(page, ci["url"], "05 - Continuous integration",
           f"Successful run {ci['databaseId']}: tests, model validation, Docker build and GHCR publish", 17)
     visit(page, PACKAGE, "06 - GHCR image", f"Container image published from commit {ci['headSha'][:12]}", 13)
@@ -220,14 +297,14 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
         set_html(page, f"<div class='wrap'><div class='eyebrow'>{number} · Live prediction</div><h1>{name}</h1>"
                  f"<div class='prediction'><img src='{image_uri(item['path'])}'><pre>{json_block(item['response'])}</pre></div>"
                  "<p class='ok'>The deployed Docker service returned the expected label.</p></div>")
-        page.wait_for_timeout(12_000)
+        hold(page, 12)
 
     mark("09C - Invalid input handling")
     set_html(page, f"<div class='wrap'><div class='eyebrow'>09C · API validation</div><h1>Invalid input is rejected</h1>"
              f"<div class='grid two'><div class='panel'><div class='label'>HTTP status</div><div class='value warn'>{evidence['invalid']['status_code']}</div></div>"
              f"<div class='panel'><div class='label'>Response</div><pre>{json_block(evidence['invalid']['response'])}</pre></div></div>"
              "<p>The service reports a client error instead of attempting inference on unreadable data.</p></div>")
-    page.wait_for_timeout(10_000)
+    hold(page, 10)
 
     logs = subprocess.run(
         ["docker", "compose", "logs", "--tail", "10", "api"],
@@ -240,7 +317,7 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
              f"<div class='panel'><div class='label'>Errors</div><div class='value'>{metrics['prediction_error_count']}</div></div>"
              f"<div class='panel'><div class='label'>Average latency</div><div class='value'>{metrics['average_prediction_latency_ms']:.1f} ms</div></div></div>"
              f"<pre style='font-size:18px;margin-top:28px'>{html.escape(logs[-1800:])}</pre></div>")
-    page.wait_for_timeout(17_000)
+    hold(page, 17)
 
     post = json.loads((ROOT / "artifacts/post_deployment/evaluation.json").read_text())
     mark("11 - Post-deployment evaluation")
@@ -250,7 +327,7 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
              f"<div class='panel'><div class='label'>Accuracy</div><div class='value'>{post['accuracy'] * 100:.0f}%</div></div></div>"
              f"<pre style='margin-top:34px'>{json_block(post['confusion'])}</pre>"
              "<p>This small check verifies the deployed API with known labels; it is separate from the held-out test evaluation.</p></div>")
-    page.wait_for_timeout(15_000)
+    hold(page, 15)
 
     elapsed = time.monotonic() - STARTED
     remaining = max(8.0, TARGET_SECONDS - elapsed)
@@ -258,14 +335,21 @@ def record(page: Page, ci: dict[str, str], cd: dict[str, str], evidence: dict[st
          "DVC data · MLflow model · FastAPI and Docker · tested CI/CD · monitoring and evaluation", remaining)
 
 
-def convert(webm: Path, output: Path) -> None:
+def convert(webm: Path, output: Path, subtitles: Path) -> None:
+    subtitle_path = subtitles.relative_to(ROOT).as_posix()
+    video_filter = (
+        "scale=1920:1080,"
+        f"subtitles=filename='{subtitle_path}':force_style='FontName=Segoe UI,FontSize=18,"
+        "PrimaryColour=&H00FFFFFF,OutlineColour=&HCC0A1020,BackColour=&H990A1020,"
+        "BorderStyle=3,Outline=1,Shadow=0,Alignment=2,MarginV=34'"
+    )
     subprocess.run(
         [
             "ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(webm),
             "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-pix_fmt", "yuv420p",
-            "-vf", "scale=1920:1080", "-movflags", "+faststart", "-an", str(output),
+            "-vf", video_filter, "-movflags", "+faststart", "-an", str(output),
         ],
-        check=True,
+        check=True, cwd=ROOT,
     )
 
 
@@ -274,11 +358,49 @@ def write_timeline(path: Path) -> None:
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def srt_time(seconds: float) -> str:
+    milliseconds = max(0, int(seconds * 1000))
+    hours, milliseconds = divmod(milliseconds, 3_600_000)
+    minutes, milliseconds = divmod(milliseconds, 60_000)
+    whole_seconds, milliseconds = divmod(milliseconds, 1000)
+    return f"{hours:02d}:{minutes:02d}:{whole_seconds:02d},{milliseconds:03d}"
+
+
+def write_subtitles(path: Path) -> None:
+    narration = {
+        "MLOps Assignment 2 - Cats vs Dogs": "This project takes a cats-versus-dogs model from image data to a working, monitored API.",
+        "01 - End-to-end workflow": "The same project code connects data preparation, training, testing, deployment and monitoring.",
+        "02 - Dataset and DVC": "The full dataset stays versioned with DVC. I use a balanced, repeatable subset for the baseline run.",
+        "03 - MLflow experiment": "Here is the completed MLflow run, with the settings and results from training on Kaggle.",
+        "03 - Evaluation artifacts": "On the held-out test set, the baseline reached 80.05 percent accuracy and 79.99 percent macro F1.",
+        "04 - GitHub repository": "The repository keeps the code, configuration, data lists, tests and deployment files in one place.",
+        "05 - Continuous integration": "A push to main runs the tests, checks the saved model, builds Docker and publishes the image.",
+        "06 - GHCR image": "This is the Docker image produced by the successful workflow and stored in GitHub's registry.",
+        "07 - Continuous deployment": "The Windows runner pulled that image, updated the service and checked a real prediction.",
+        "08 - FastAPI service": "The deployed API provides a health check, image prediction and simple request metrics.",
+        "09A - Known cat prediction": "This known cat image is classified correctly, with probabilities for both classes.",
+        "09B - Known dog prediction": "The same deployed service also returns the expected result for this known dog image.",
+        "09C - Invalid input handling": "If the upload is not a valid image, the API returns a clear error instead of trying to predict.",
+        "10 - Monitoring": "The service records how many predictions were made, any errors, and the average response time.",
+        "11 - Post-deployment evaluation": "Finally, I checked the live API with 20 labelled images: 10 cats and 10 dogs.",
+        "COMPLETE - M1–M5 demonstrated": "That completes the full assignment path, from versioned data to a deployed and checked model.",
+    }
+    blocks = []
+    for index, (start, title) in enumerate(TIMELINE, start=1):
+        # Keep the closing caption inside the recorded card even when browser
+        # shutdown trims a small amount from the target duration.
+        next_start = TIMELINE[index][0] if index < len(TIMELINE) else start + 7.4
+        end = max(start + 2.5, next_start - 0.6)
+        text = narration.get(title, title)
+        blocks.append(f"{index}\n{srt_time(start + 0.6)} --> {srt_time(end)}\n{text}\n")
+    path.write_text("\n".join(blocks), encoding="utf-8")
+
+
 def preflight(ci: dict[str, str], cd: dict[str, str], evidence: dict[str, object]) -> None:
     output = ROOT / "artifacts/demo_preflight"
     output.mkdir(parents=True, exist_ok=True)
     pages = [
-        ("01_repository.png", REPOSITORY),
+        ("01_repository.png", f"{REPOSITORY}#readme"),
         ("02_ci.png", ci["url"]),
         ("03_package.png", PACKAGE),
         ("04_cd.png", cd["url"]),
@@ -288,9 +410,15 @@ def preflight(ci: dict[str, str], cd: dict[str, str], evidence: dict[str, object
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(channel="msedge", headless=True)
         page = browser.new_page(viewport={"width": WIDTH, "height": HEIGHT})
+        title_card(page, 0.2)
+        page.screenshot(path=str(output / "00_title.png"))
+        print("Preflight screenshot: 00_title.png")
         for name, url in pages:
             page.goto(url, wait_until="domcontentloaded", timeout=45_000)
             page.wait_for_timeout(6_000 if "mlflow" in name else 1_800)
+            if "repository" in name:
+                page.mouse.wheel(0, 1050)
+                page.wait_for_timeout(1_000)
             page.screenshot(path=str(output / name))
             print(f"Preflight screenshot: {name}")
         browser.close()
@@ -341,9 +469,12 @@ def main() -> None:
         webm = Path(video.path())
         browser.close()
     print(f"WebM completed: {webm} ({webm.stat().st_size / 1e6:.1f} MB)")
+    timeline_path = args.output.with_name(args.output.stem + "_timeline.txt")
+    subtitle_path = args.output.with_name(args.output.stem + "_subtitles.srt")
+    write_timeline(timeline_path)
+    write_subtitles(subtitle_path)
     print("FFmpeg conversion started", flush=True)
-    convert(webm, args.output)
-    write_timeline(args.output.with_name(args.output.stem + "_timeline.txt"))
+    convert(webm, args.output, subtitle_path)
     from scripts.validate_video import validate
 
     result = validate(args.output)

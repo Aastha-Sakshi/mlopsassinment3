@@ -70,10 +70,11 @@ scripts\run_demo.cmd
 python -m scripts.validate_video docs/demo.mp4
 ```
 
-The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 275.16
-seconds (4:35.16), with no black section lasting two seconds or longer. It is
-a silent, captioned browser recording and contains no credentials or desktop
-notifications.
+The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 264.80
+seconds (4:24.80), with no black section lasting two seconds or longer. It is
+a silent browser recording with burned-in, human-written subtitles and subtle
+deterministic cursor and scrolling motion. It contains no credentials or
+desktop notifications.
 
 ## Packaging
 

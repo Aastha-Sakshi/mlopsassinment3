@@ -1,0 +1,63 @@
+1
+00:00:00,600 --> 00:00:10,040
+This project takes a cats-versus-dogs model from image data to a working, monitored API.
+
+2
+00:00:11,240 --> 00:00:24,369
+The same project code connects data preparation, training, testing, deployment and monitoring.
+
+3
+00:00:25,569 --> 00:00:46,432
+The full dataset stays versioned with DVC. I use a balanced, repeatable subset for the baseline run.
+
+4
+00:00:47,632 --> 00:01:11,634
+Here is the completed MLflow run, with the settings and results from training on Kaggle.
+
+5
+00:01:12,834 --> 00:01:25,932
+On the held-out test set, the baseline reached 80.05 percent accuracy and 79.99 percent macro F1.
+
+6
+00:01:27,132 --> 00:01:52,228
+The repository keeps the code, configuration, data lists, tests and deployment files in one place.
+
+7
+00:01:53,428 --> 00:02:12,696
+A push to main runs the tests, checks the saved model, builds Docker and publishes the image.
+
+8
+00:02:13,896 --> 00:02:28,540
+This is the Docker image produced by the successful workflow and stored in GitHub's registry.
+
+9
+00:02:29,740 --> 00:02:48,682
+The Windows runner pulled that image, updated the service and checked a real prediction.
+
+10
+00:02:49,882 --> 00:03:08,619
+The deployed API provides a health check, image prediction and simple request metrics.
+
+11
+00:03:09,819 --> 00:03:20,728
+This known cat image is classified correctly, with probabilities for both classes.
+
+12
+00:03:21,928 --> 00:03:32,838
+The same deployed service also returns the expected result for this known dog image.
+
+13
+00:03:34,038 --> 00:03:44,057
+If the upload is not a valid image, the API returns a clear error instead of trying to predict.
+
+14
+00:03:45,257 --> 00:04:01,494
+The service records how many predictions were made, any errors, and the average response time.
+
+15
+00:04:02,694 --> 00:04:16,588
+Finally, I checked the live API with 20 labelled images: 10 cats and 10 dogs.
+
+16
+00:04:17,788 --> 00:04:23,988
+That completes the full assignment path, from versioned data to a deployed and checked model.

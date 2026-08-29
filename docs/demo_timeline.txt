@@ -1,16 +1,16 @@
-0:00  CATS VS DOGS - From images to a deployed service
-0:08  01 - End-to-end workflow
-0:22  02 - Dataset and DVC
-0:44  03 - MLflow experiment
-1:08  03 - Evaluation artifacts
-1:23  04 - GitHub repository
-1:46  05 - Continuous integration
-2:07  06 - GHCR image
-2:22  07 - Continuous deployment
-2:41  08 - FastAPI service
-3:02  09A - Known cat prediction
-3:15  09B - Known dog prediction
-3:27  09C - Invalid input handling
-3:38  10 - Monitoring
-3:55  11 - Post-deployment evaluation
-4:10  COMPLETE - M1–M5 demonstrated
+0:00  MLOps Assignment 2 - Cats vs Dogs
+0:10  01 - End-to-end workflow
+0:24  02 - Dataset and DVC
+0:47  03 - MLflow experiment
+1:12  03 - Evaluation artifacts
+1:26  04 - GitHub repository
+1:52  05 - Continuous integration
+2:13  06 - GHCR image
+2:29  07 - Continuous deployment
+2:49  08 - FastAPI service
+3:09  09A - Known cat prediction
+3:21  09B - Known dog prediction
+3:33  09C - Invalid input handling
+3:44  10 - Monitoring
+4:02  11 - Post-deployment evaluation
+4:17  COMPLETE - M1–M5 demonstrated
