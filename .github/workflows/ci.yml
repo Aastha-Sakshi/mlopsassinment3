@@ -35,7 +35,7 @@ jobs:
           context: .
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/cats-dogs-api:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/cats-dogs-api:main
+            ghcr.io/aastha-sakshi/cats-dogs-api:${{ github.sha }}
+            ghcr.io/aastha-sakshi/cats-dogs-api:main
           cache-from: type=gha
           cache-to: type=gha,mode=max
