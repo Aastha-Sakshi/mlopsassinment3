@@ -63,8 +63,8 @@ Final verified automation evidence:
 
 ## Demonstration video
 
-The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 264.80
-seconds (4:24.80), with no black section lasting two seconds or longer. It is
+The verified final file is `docs/demo.mp4`: H.264, 1920 x 1080, 273.96
+seconds (4:33.96), with no black section lasting two seconds or longer. It is
 a silent browser recording with burned-in, human-written subtitles and subtle
 deterministic cursor and scrolling motion. It contains no credentials or
 desktop notifications.
