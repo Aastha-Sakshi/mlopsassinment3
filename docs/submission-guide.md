@@ -61,7 +61,7 @@ it. Do not place GitHub, Kaggle, or MLflow credentials in the repository.
 python -m scripts.package_submission
 ```
 
-This creates `dist/mlops-cats-dogs-submission.zip` from an explicit allowlist.
+This creates `dist/mlops-cats-dogs-submission-final.zip` from an explicit allowlist.
 It includes source, configurations, DVC pointers/manifests, tests, workflows,
 the production bundle, and compact experiment evidence. Raw/processed images,
 the DVC cache, virtual environment, credentials, and transient Kaggle downloads

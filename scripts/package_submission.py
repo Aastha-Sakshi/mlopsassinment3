@@ -63,13 +63,21 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("dist/mlops-cats-dogs-submission.zip"),
+        default=Path("dist/mlops-cats-dogs-submission-final.zip"),
     )
+    parser.add_argument("--inspect-only", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     output = (root / args.output).resolve() if not args.output.is_absolute() else args.output
     output.parent.mkdir(parents=True, exist_ok=True)
     files = list(iter_submission_files(root))
+    largest = sorted(files, key=lambda item: item[0].stat().st_size, reverse=True)[:10]
+    total_mb = sum(path.stat().st_size for path, _ in files) / (1024 * 1024)
+    print(f"Allowlist: {len(files)} files ({total_mb:.2f} MiB uncompressed)")
+    for path, relative in largest:
+        print(f"  {path.stat().st_size / (1024 * 1024):8.2f} MiB  {relative.as_posix()}")
+    if args.inspect_only:
+        return
     with ZipFile(output, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
         for path, relative in files:
             archive.write(path, relative.as_posix())
