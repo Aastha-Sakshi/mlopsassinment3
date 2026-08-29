@@ -19,6 +19,12 @@ ALGORITHM_VERSION = "sha256-ranked-per-existing-split-class-v1"
 
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
+    if path.suffix.lower() == ".csv":
+        # Git may materialize text files with LF or CRLF. Hash canonical CSV
+        # bytes so the recorded dataset identity is stable across platforms.
+        lines = path.read_text(encoding="utf-8").splitlines()
+        digest.update(("\r\n".join(lines) + "\r\n").encode("utf-8"))
+        return digest.hexdigest()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)

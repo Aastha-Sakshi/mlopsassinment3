@@ -45,5 +45,13 @@ def test_project_subset_rebuild_matches_recorded_manifests(tmp_path):
         rebuilt,
         selection_seed=20260829,
     )
-    for name in ("train.csv", "validation.csv", "test.csv", "subset_metadata.json"):
-        assert (recorded / name).read_bytes() == (rebuilt / name).read_bytes()
+    for name in ("train.csv", "validation.csv", "test.csv"):
+        assert (recorded / name).read_text(encoding="utf-8").splitlines() == (
+            rebuilt / name
+        ).read_text(encoding="utf-8").splitlines()
+    assert (recorded / "subset_metadata.json").read_bytes() == (
+        rebuilt / "subset_metadata.json"
+    ).read_bytes()
+    assert validate_subset(recorded)["combined_sha256"] == (
+        "55c208fea1fb4fea2043dab00db62ab012cf1fa851a761b01526c96fd6d4b8a9"
+    )
