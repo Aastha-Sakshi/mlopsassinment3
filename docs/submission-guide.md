@@ -68,6 +68,7 @@ seconds (4:33.96), with no black section lasting two seconds or longer. It is
 a silent browser recording with burned-in, human-written subtitles and subtle
 deterministic cursor and scrolling motion. It contains no credentials or
 desktop notifications.
+[https://drive.google.com/file/d/1m5zCuxiZ60XCa1CP8Mnqjrd5Au5WZ3zV/view?usp=sharing]
 
 ## Packaging
 
