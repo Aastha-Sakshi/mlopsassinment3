@@ -1,0 +1,10 @@
+services:
+  api:
+    image: "${IMAGE_REPOSITORY:-cats-dogs-api}:${IMAGE_TAG:-local}"
+    build:
+      context: .
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      MODEL_BUNDLE_PATH: /app/models/production
+    restart: unless-stopped

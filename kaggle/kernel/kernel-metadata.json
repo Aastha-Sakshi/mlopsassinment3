@@ -1,0 +1,18 @@
+{
+  "id": "retr0sm06/cats-dogs-mlops-baseline",
+  "title": "Cats Dogs MLOps Baseline",
+  "code_file": "training_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_internet": "true",
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [
+    "bhavikjikadara/dog-and-cat-classification-dataset",
+    "retr0sm06/mlops-cats-dogs-source-snapshot"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

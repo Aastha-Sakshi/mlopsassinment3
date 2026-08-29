@@ -1,0 +1,53 @@
+# Friend-provided reference material. It is preserved locally but is not part of
+# our implementation history.
+mlops-cats-dogs-assignment2.zip
+prototype_original/
+Assignment 2.pdf
+
+# Python environments, caches, and test output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Data is managed by DVC in a later phase. Split manifests remain Git-tracked.
+data/raw/
+data/processed/*
+!data/processed/PetImages224.dvc
+# The extracted source remains ignored; its small DVC pointer is committed.
+data/downloads/*
+!data/downloads/PetImages.dvc
+data/downloads/PetImages/
+
+# Large or disposable model and experiment output. A deliberately promoted,
+# small production bundle may be tracked later.
+models/checkpoints/
+models/experiments/
+mlruns/
+mlartifacts/
+artifacts/*
+!artifacts/dataset_validation.json
+!artifacts/training/
+!artifacts/training/**
+!artifacts/post_deployment/
+!artifacts/post_deployment/**
+
+# Runtime and editor files
+logs/
+*.log
+.vscode/
+.idea/
+.DS_Store

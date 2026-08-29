@@ -1,0 +1,119 @@
+{
+  "accuracy": 0.75,
+  "base_url": "http://127.0.0.1:8000",
+  "confusion": {
+    "cat->cat": 9,
+    "cat->dog": 1,
+    "dog->cat": 4,
+    "dog->dog": 6
+  },
+  "predictions": [
+    {
+      "image": "Cat/10.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10003.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10025.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10031.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10107.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10111.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10161.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10181.jpg",
+      "predicted_label": "dog",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10186.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Cat/10187.jpg",
+      "predicted_label": "cat",
+      "true_label": "cat"
+    },
+    {
+      "image": "Dog/10009.jpg",
+      "predicted_label": "cat",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10024.jpg",
+      "predicted_label": "cat",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10047.jpg",
+      "predicted_label": "cat",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10060.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10073.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10085.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10100.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10103.jpg",
+      "predicted_label": "cat",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10163.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    },
+    {
+      "image": "Dog/10206.jpg",
+      "predicted_label": "dog",
+      "true_label": "dog"
+    }
+  ],
+  "sample_count": 20,
+  "samples_per_class": 10,
+  "service_metrics": {
+    "average_prediction_latency_ms": 121.35098452424808,
+    "prediction_error_count": 0,
+    "prediction_request_count": 21
+  }
+}

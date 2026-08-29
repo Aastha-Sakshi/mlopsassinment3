@@ -1,0 +1,45 @@
+{
+  "bundle_dir": "artifacts/training/simple-cnn-baseline-50pct/model_bundle",
+  "checkpoint_path": "models/checkpoints/simple-cnn-baseline-50pct/best_model_state.pt",
+  "class_counts": {
+    "test": {
+      "cat": 624,
+      "dog": 624
+    },
+    "train": {
+      "cat": 4992,
+      "dog": 4992
+    },
+    "validation": {
+      "cat": 624,
+      "dog": 624
+    }
+  },
+  "dataset_counts": {
+    "test": 1248,
+    "train": 9984,
+    "validation": 1248
+  },
+  "device": "cuda",
+  "evaluation_summary": {
+    "accuracy": 0.8004807692307693,
+    "f1_cat": 0.7891617273497037,
+    "f1_dog": 0.8106463878326996,
+    "f1_macro": 0.7999040575912016,
+    "precision_cat": 0.8366247755834829,
+    "precision_dog": 0.7713458755426917,
+    "precision_macro": 0.8039853255630873,
+    "recall_cat": 0.7467948717948718,
+    "recall_dog": 0.8541666666666666,
+    "recall_macro": 0.8004807692307692,
+    "test_loss": 0.44873435623370683
+  },
+  "execution_environment": "kaggle",
+  "mlflow_enabled": true,
+  "mlflow_run_id": "462a190825b548c7b6d5600724b42cca",
+  "processed_dir": "/kaggle/working/PetImages224",
+  "processed_dvc_hash": "6fa0f52466ef6aa1583102e520c47980.dir",
+  "production_bundle_updated": true,
+  "run_name": "simple-cnn-baseline-50pct",
+  "subset_manifest_hash": "55c208fea1fb4fea2043dab00db62ab012cf1fa851a761b01526c96fd6d4b8a9"
+}

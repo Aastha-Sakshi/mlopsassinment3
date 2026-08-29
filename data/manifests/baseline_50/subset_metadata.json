@@ -1,0 +1,53 @@
+{
+  "algorithm_version": "sha256-ranked-per-existing-split-class-v1",
+  "class_counts": {
+    "test": {
+      "cat": 624,
+      "dog": 624
+    },
+    "train": {
+      "cat": 4992,
+      "dog": 4992
+    },
+    "validation": {
+      "cat": 624,
+      "dog": 624
+    }
+  },
+  "description": "The full Kaggle dataset is the authoritative DVC-versioned dataset, while a deterministic balanced 50% subset is used for the assignment's baseline training experiment to reduce iteration time.",
+  "images_copied": false,
+  "samples_per_class": 6240,
+  "selection_scope": "rank independently within each existing split and class",
+  "selection_seed": 20260829,
+  "source_dataset_fingerprint_sha256": "b17077327cf872b4dff77102d6e5463f97053445c7e7e2452895aac045bfef82",
+  "source_manifest_hashes_sha256": {
+    "test.csv": "e67e2235834f72d916fe4f23116ca3523bdde61d7c75285fde16db41c60e8322",
+    "train.csv": "627b55718e111a665da6f024c652726d6e546a40fafdc735ac4b6794afaba451",
+    "validation.csv": "79b5e32c3f3c8a1b0b4456917cb41b9fd9e3293df81c4d0564d7b722647791c0"
+  },
+  "source_processed_dvc": {
+    "file_count": 24967,
+    "hash": "6fa0f52466ef6aa1583102e520c47980.dir",
+    "hash_type": "md5",
+    "path": "data/processed/PetImages224.dvc",
+    "size_bytes": 490006811
+  },
+  "source_split_seed": 42,
+  "split_counts": {
+    "test": 1248,
+    "train": 9984,
+    "validation": 1248
+  },
+  "split_ratios": {
+    "test": 0.1,
+    "train": 0.8,
+    "validation": 0.1
+  },
+  "subset_manifest_combined_sha256": "55c208fea1fb4fea2043dab00db62ab012cf1fa851a761b01526c96fd6d4b8a9",
+  "subset_manifest_hashes_sha256": {
+    "test.csv": "5f50bcddb2e15bcfc7ab5e3635893c11f3dfe628c2b725608f0405307959931a",
+    "train.csv": "223dc6ba9e9d5456ed681fe2eeb429b72640fde01ec87fe4749abbd0d8cba5d5",
+    "validation.csv": "fb8d6a83912c9940594375fde18d9a08cac6637226f2980795d5276b5a585bf6"
+  },
+  "subset_size": 12480
+}

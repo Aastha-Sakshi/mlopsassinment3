@@ -1,0 +1,43 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: [self-hosted, mlops-deploy]
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install smoke-test dependency
+        run: python -m pip install requests==2.34.2
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull and deploy immutable image
+        env:
+          IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}/cats-dogs-api
+          IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          docker compose pull
+          docker compose up -d --no-build --remove-orphans
+      - name: Smoke test deployment
+        run: python -m scripts.smoke_test --base-url http://127.0.0.1:8000
